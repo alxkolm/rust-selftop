@@ -1,6 +1,6 @@
 #![feature(globs)]
 
-mod xlib;
-mod xlibint;
-mod xtst;
-mod xutil;
+pub mod xlib;
+pub mod xlibint;
+pub mod xtst;
+pub mod xutil;
