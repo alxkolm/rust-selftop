@@ -22,6 +22,7 @@ static mut event_count:u64 = 0;
 static mut event_key:u64 = 0;
 static mut event_button:u64 = 0;
 static mut event_motion:u64 = 0;
+static mut prev_time:u64 = 0;
 fn main() {
 	// Start X Record event loop
 	xRecordBootstrap();
@@ -95,7 +96,7 @@ fn xRecordBootstrap () {
 		loop {
 			periodic.recv();
 			println!(
-				"Event count {}, KeyPress: {}, ButtonPress: {}, Motion: {}",
+				"Total {}, Key: {}, Button: {}, Motion: {}",
 				event_count,
 				event_key,
 				event_button,
@@ -109,6 +110,8 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 
 	unsafe {
 		let data = &*raw_data;
+		prev_time = data.server_time;
+
 		if data.category != xtst::XRecordFromServer {
 			return;
 		}
