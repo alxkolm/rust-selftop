@@ -2,7 +2,7 @@ use x11::xlib;
 use x11wrapper::window::{Window};
 
 pub struct Display<'a> {
-    display: *mut xlib::Display,
+    pub display: *mut xlib::Display,
 }
 
 impl<'a> Display<'a> {
