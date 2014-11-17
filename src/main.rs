@@ -6,8 +6,10 @@ use x11::xtst;
 use x11wrapper::{Display};
 use std::time::Duration;
 use std::io::Timer;
+use selftop::{MotionSniffer};
 mod x11;
 mod x11wrapper;
+mod selftop;
 
 struct XRecordDatum {
     xtype: u8,
@@ -23,6 +25,12 @@ static mut event_key:u64 = 0;
 static mut event_button:u64 = 0;
 static mut event_motion:u64 = 0;
 static mut prev_time:u64 = 0;
+
+static mut motion_sniffer: MotionSniffer = MotionSniffer{
+	last_event_time: 0,
+	motion_count: 0
+};
+
 fn main() {
 	// Start X Record event loop
 	xRecordBootstrap();
