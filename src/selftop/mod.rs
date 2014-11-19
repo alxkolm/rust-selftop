@@ -11,7 +11,7 @@ impl MotionSniffer {
 	
 		let delta = time - self.last_event_time;
 
-		if delta > 200 || self.last_event_time == 0 {
+		if delta > 200 {
 			self.motion_count += 1;
 		}
 
