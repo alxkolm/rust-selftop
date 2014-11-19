@@ -7,18 +7,22 @@ pub struct MotionSniffer {
 }
 
 impl MotionSniffer {
-	fn new () -> MotionSniffer{
-		MotionSniffer{
-			last_event_time: 0,
-			motion_count: 0
-		}
-	}
-	fn processEvent(&self, time: Time){
+	// pub fn new () -> MotionSniffer<'a>{
+	// 	// let time: Time = 0;
+	// 	// let mcount: u64 =0;
+	// 	MotionSniffer{
+	// 		last_event_time: &mut 0,
+	// 		motion_count: &mut 0
+	// 	}
+	// }
+	pub fn processEvent(&mut self, time: Time){
+	
 		let delta = time - self.last_event_time;
-		self.last_event_time = time;
 
-		if delta > 100 {
+		if delta > 200 || self.last_event_time == 0 {
 			self.motion_count += 1;
 		}
+		
+		self.last_event_time = time;
 	}
 }

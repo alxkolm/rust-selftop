@@ -104,10 +104,11 @@ fn xRecordBootstrap () {
 		loop {
 			periodic.recv();
 			println!(
-				"Total {}, Key: {}, Button: {}, Motion: {}",
+				"Total {}, Key: {}, Button: {}, Motion: {} ({}) ",
 				event_count,
 				event_key,
 				event_button,
+				motion_sniffer.motion_count,
 				event_motion);
 			xtst::XRecordProcessReplies(display_data.display);
 		}
@@ -133,7 +134,8 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 				event_button += 1
 			},
 			xtst::MotionNotify => {
-				event_motion += 1
+				event_motion += 1;
+				motion_sniffer.processEvent(data.server_time);
 			},
 			_ => {}
 		}
