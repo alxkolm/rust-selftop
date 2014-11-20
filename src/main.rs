@@ -20,6 +20,7 @@ struct XRecordDatum {
 
 static mut display_control: Display<'static> = Display {display: 0 as *mut xlib::Display};
 static mut display_data: x11wrapper::Display<'static> = x11wrapper::Display {display: 0 as *mut xlib::Display};
+
 static mut event_count:u64 = 0;
 static mut event_key:u64 = 0;
 static mut event_button:u64 = 0;
@@ -126,6 +127,10 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 		}
 		event_count += 1;
 		let xdatum = &*(data.data as *mut XRecordDatum);
+
+		// Detect wm_name
+
+		// Count events
 		match xdatum.xtype {
 			xtst::KeyPress => {
 				event_key += 1;
@@ -141,4 +146,8 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 		}
 		xtst::XRecordFreeData(raw_data);
 	}
+}
+
+fn get_current_window() {
+	
 }
