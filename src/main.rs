@@ -149,5 +149,34 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 }
 
 fn get_current_window() {
+	let mut current_window = display_control.get_input_focus();
+	let mut parent_window: Option<Window> = None;
+	let mut wm_name_str: Option<String> = None;
 	
+	let mut i = 0u;
+	while i < 10 {
+		if current_window.id == 0 {
+			break;
+		}
+		
+		wm_name_str = current_window.get_wm_name();
+		if wm_name_str.is_none() || wm_name_str.clone().unwrap() == "FocusProxy".to_string() {
+			let tree = current_window.get_tree();
+				parent_window = match tree {
+					Some(WindowTree{parent: parent, children: _}) => {
+						Some(parent)
+					},
+					_ => None
+				}
+		} else {
+			break;
+		}
+					
+		current_window = match parent_window {
+			Some(win) => win,
+			_ => current_window
+		};
+		
+		i += 1;
+	}
 }
