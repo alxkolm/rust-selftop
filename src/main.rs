@@ -148,9 +148,9 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 	}
 }
 
-fn get_current_window() {
-	let mut current_window = display_control.get_input_focus();
-	let mut parent_window: Option<Window> = None;
+fn get_current_window() -> Option<String> {
+	let mut current_window = unsafe {display_control.get_input_focus()};
+	let mut parent_window: Option<x11wrapper::window::Window> = None;
 	let mut wm_name_str: Option<String> = None;
 	
 	let mut i = 0u;
@@ -161,13 +161,14 @@ fn get_current_window() {
 		
 		wm_name_str = current_window.get_wm_name();
 		if wm_name_str.is_none() || wm_name_str.clone().unwrap() == "FocusProxy".to_string() {
+			// If not found or wmname is "FocusProxy" dig up to tree
 			let tree = current_window.get_tree();
-				parent_window = match tree {
-					Some(WindowTree{parent: parent, children: _}) => {
-						Some(parent)
-					},
-					_ => None
-				}
+			parent_window = match tree {
+				Some(x11wrapper::window::WindowTree{parent: parent, children: _}) => {
+					Some(parent)
+				},
+				_ => None
+			}
 		} else {
 			break;
 		}
@@ -179,4 +180,5 @@ fn get_current_window() {
 		
 		i += 1;
 	}
+	wm_name_str
 }

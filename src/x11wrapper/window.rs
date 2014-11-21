@@ -123,6 +123,6 @@ impl<'a> Window<'a> {
 }
 
 pub struct WindowTree<'a> {
-    parent: Window<'a>,
-    children: Option<Vec<Window<'a>>>,
+    pub parent: Window<'a>,
+    pub children: Option<Vec<Window<'a>>>,
 }
