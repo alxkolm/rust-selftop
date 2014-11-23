@@ -27,12 +27,38 @@ impl<'a> Window<'a> {
 			match wmname_c {
 				Some(bytes) => match String::from_utf8(bytes){
 					Ok(value) => Some(value),
-					Err(err) => {println!("Error: {}", err); None}
+					Err(err) => {None}
 				},
 				None => None
 			}
 		// };
 		// wmname
+	}
+	pub fn get_class(&self) -> Option<Vec<String>> {
+		let property_c = self.get_property("WM_CLASS", "STRING");
+
+		let chunks = match property_c{
+			Some(b) => Window::splitByNullByte(b),
+			None => None
+		};
+		let mut strings: Vec<String> = Vec::new();
+		match chunks {
+			Some(ref items) => {
+				for bytes in items.iter() {
+					match String::from_utf8((*bytes).clone()) {
+						Ok(value) => {
+							strings.push(value);
+						}
+						Err(_) => {}
+					}
+				}
+			},
+			None => {}
+		}
+		match strings.len() {
+			0 => None,
+			_ => Some(strings)
+		}
 	}
 	pub fn get_property(&self, property_name: &str, property_type: &str) -> Option<Vec<u8>>{
 		unsafe {
@@ -73,6 +99,27 @@ impl<'a> Window<'a> {
 			xlib::XFree(prop_return as *mut libc::types::common::c95::c_void);
 			
 			Some(copy_data)
+		}
+	}
+
+	fn splitByNullByte (buf: Vec<u8>) -> Option<Vec<Vec<u8>>> {
+		let mut strings: Vec<Vec<u8>> = Vec::new();
+		let mut current_string = Vec::new();
+		for b in buf.iter() {
+			if (*b != 0) {
+				current_string.push(*b);
+			} else {
+				strings.push(current_string.clone());
+				current_string = Vec::new();
+			}
+		}
+		if (current_string.len() > 0) {
+			strings.push(current_string.clone());
+		}
+		
+		match strings.len() {
+			0 => None,
+			_ => Some(strings)
 		}
 	}
 	

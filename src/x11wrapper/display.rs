@@ -22,4 +22,8 @@ impl<'a> Display<'a> {
 		unsafe{xlib::XGetInputFocus(self.display, current_window, revert_to_return)};
 		Window {id: unsafe{*current_window as uint}, display: self.display}
 	}
+
+	pub fn window(&self, xid: uint) -> Window {
+		Window {id: xid, display: self.display}
+	}
 }

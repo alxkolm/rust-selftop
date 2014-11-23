@@ -7,6 +7,7 @@ use x11wrapper::{Display};
 use std::time::Duration;
 use std::io::Timer;
 use selftop::{MotionSniffer};
+use std::collections::HashMap;
 mod x11;
 mod x11wrapper;
 mod selftop;
@@ -76,8 +77,8 @@ fn xRecordBootstrap () {
 		// Prepare record range
 		let mut recordRange: xtst::XRecordRange = *xtst::XRecordAllocRange();
 		let mut recordRangePtr: *mut *mut xtst::XRecordRange = std::mem::transmute(&mut &mut recordRange);
-		recordRange.device_events.first = 2; // KeyPress
-		recordRange.device_events.last = 6; // MotionNotify
+		recordRange.device_events.first = xtst::KeyPress; // KeyPress
+		recordRange.device_events.last = xtst::MotionNotify; // MotionNotify
 		
 		// Create context
 		let context = xtst::XRecordCreateContext(
@@ -93,26 +94,26 @@ fn xRecordBootstrap () {
 		}
 
 		// Run
-		let res = xtst::XRecordEnableContextAsync(display_data.display, context, Some(recordCallback), &mut 0);
+		let res = xtst::XRecordEnableContext(display_data.display, context, Some(recordCallback), &mut 0);
 		if res == 0 {
 			panic!("Cound not enable the Record context!\n");
 		}
 		xtst::XRecordFreeContext(display_data.display, context);
 
 		// without this timer process consume 100% CPU
-		let mut timer = Timer::new().unwrap();
-		let periodic = timer.periodic(Duration::milliseconds(1000));
-		loop {
-			periodic.recv();
-			println!(
-				"Total {}, Key: {}, Button: {}, Motion: {} ({}) ",
-				event_count,
-				event_key,
-				event_button,
-				motion_sniffer.motion_count,
-				event_motion);
-			xtst::XRecordProcessReplies(display_data.display);
-		}
+		// let mut timer = Timer::new().unwrap();
+		// let periodic = timer.periodic(Duration::milliseconds(1000));
+		// loop {
+		// 	periodic.recv();
+		// 	println!(
+		// 		"Total {}, Key: {}, Button: {}, Motion: {} ({}) ",
+		// 		event_count,
+		// 		event_key,
+		// 		event_button,
+		// 		motion_sniffer.motion_count,
+		// 		event_motion);
+		// 	xtst::XRecordProcessReplies(display_data.display);
+		// }
 	}
 }
 
@@ -129,6 +130,21 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 		let xdatum = &*(data.data as *mut XRecordDatum);
 
 		// Detect wm_name
+		let mut windows = HashMap::new();
+		let window = get_current_window();
+		
+		let mut counter: &mut selftop::Counter = match windows.get_mut(&window) {
+			Some(v) => v,
+			None => ()
+		};
+
+		// create new counter
+		let mut c = selftop::Counter{mouse_motion: 0, keys: 0};
+		windows.insert(window, c);
+		match windows.get_mut(&window) {
+			Some(v) => v,
+			None => {panic!("cant't add window to hashmap")}
+		}
 
 		// Count events
 		match xdatum.xtype {
@@ -148,7 +164,7 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 	}
 }
 
-fn get_current_window() -> Option<String> {
+fn get_current_window() -> selftop::Window {
 	let mut current_window = unsafe {display_control.get_input_focus()};
 	let mut parent_window: Option<x11wrapper::window::Window> = None;
 	let mut wm_name_str: Option<String> = None;
@@ -170,6 +186,7 @@ fn get_current_window() -> Option<String> {
 				_ => None
 			}
 		} else {
+			// Found window with adequate WM_NAME. Exit from while loop.
 			break;
 		}
 					
@@ -180,5 +197,8 @@ fn get_current_window() -> Option<String> {
 		
 		i += 1;
 	}
-	wm_name_str
+	selftop::Window {
+		wm_name: current_window.get_wm_name(),
+		class: current_window.get_class(),
+	}
 }
