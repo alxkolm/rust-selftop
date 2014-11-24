@@ -26,7 +26,7 @@ static mut event_count:u64 = 0;
 static mut event_key:u64 = 0;
 static mut event_button:u64 = 0;
 static mut event_motion:u64 = 0;
-static mut prev_time:u64 = 0;
+static mut prev_time:uint = 0;
 
 static mut motion_sniffer: MotionSniffer = MotionSniffer{
 	last_event_time: 0,
@@ -121,7 +121,7 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 
 	unsafe {
 		let data = &*raw_data;
-		prev_time = data.server_time;
+		prev_time = data.server_time as uint;
 
 		if data.category != xtst::XRecordFromServer {
 			return;
