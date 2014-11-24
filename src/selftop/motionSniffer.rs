@@ -1,9 +1,9 @@
 // mod x11wrapper::window::{Window};
-type Time = u64;
+type Time = uint;
 pub struct MotionSniffer {
     pub last_event_time: Time,
     // pub last_window: Window,
-    pub motion_count: u64
+    pub motion_count: uint
 }
 
 impl MotionSniffer {

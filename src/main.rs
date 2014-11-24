@@ -133,18 +133,14 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 		let mut windows = HashMap::new();
 		let window = get_current_window();
 		
-		let mut counter: &mut selftop::Counter = match windows.get_mut(&window) {
-			Some(v) => v,
-			None => ()
-		};
-
-		// create new counter
-		let mut c = selftop::Counter{mouse_motion: 0, keys: 0};
-		windows.insert(window, c);
-		match windows.get_mut(&window) {
-			Some(v) => v,
-			None => {panic!("cant't add window to hashmap")}
+		
+		if !windows.contains_key(&window) {
+			let mut c = selftop::Counter{mouse_motion: 0, keys: 0};
+			windows.insert(window, c);
 		}
+
+		let counter = windows.get_mut(&window);
+		
 
 		// Count events
 		match xdatum.xtype {
@@ -156,7 +152,7 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 			},
 			xtst::MotionNotify => {
 				event_motion += 1;
-				motion_sniffer.processEvent(data.server_time);
+				motion_sniffer.processEvent(data.server_time as uint);
 			},
 			_ => {}
 		}
