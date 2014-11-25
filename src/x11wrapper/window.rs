@@ -85,7 +85,7 @@ impl<'a> Window<'a> {
 				&mut prop_return
 				);
 			if (xa_property_type != actual_type_return) {
-				println!("Invalid type of {} property", property_name);
+				// println!("Invalid type of {} property", property_name);
 				return None;
 			}
 			let tmp_size = ((actual_format_return as uint) / 8) * (nitems_return as uint);

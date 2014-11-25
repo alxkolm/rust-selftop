@@ -6,7 +6,7 @@ use x11::xtst;
 use x11wrapper::{Display};
 use std::time::Duration;
 use std::io::Timer;
-use selftop::{MotionSniffer};
+use selftop::{MotionSniffer, WindowSniffer};
 use std::collections::HashMap;
 mod x11;
 mod x11wrapper;
@@ -32,6 +32,10 @@ static mut motion_sniffer: MotionSniffer = MotionSniffer{
 	last_event_time: 0,
 	motion_count: 0
 };
+
+struct Exchange {
+	a: int
+}
 
 fn main() {
 	// Start X Record event loop
@@ -93,8 +97,9 @@ fn xRecordBootstrap () {
 			panic!("Fail create Record context\n");
 		}
 
+		let mut windowSniffer = WindowSniffer::new();
 		// Run
-		let res = xtst::XRecordEnableContext(display_data.display, context, Some(recordCallback), &mut 0);
+		let res = xtst::XRecordEnableContext(display_data.display, context, Some(recordCallback), std::mem::transmute(&mut windowSniffer));
 		if res == 0 {
 			panic!("Cound not enable the Record context!\n");
 		}
@@ -120,6 +125,8 @@ fn xRecordBootstrap () {
 extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterceptData) {
 
 	unsafe {
+		let ex: &mut WindowSniffer = std::mem::transmute(pointer);
+		
 		let data = &*raw_data;
 		prev_time = data.server_time as uint;
 
