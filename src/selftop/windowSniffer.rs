@@ -9,7 +9,7 @@ pub struct WindowSniffer<'a> {
 	pub prev_window: Option<Window>
 }
 
-#[deriving(Hash, Eq)]
+#[deriving(Hash, Eq, Clone)]
 pub struct Window {
     pub wm_name: Option<String>,
     pub class: Option<Vec<String>>,

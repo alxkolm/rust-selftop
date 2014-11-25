@@ -136,7 +136,7 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 		
 		if !windows.contains_key(&window) {
 			let mut c = selftop::Counter{mouse_motion: 0, keys: 0};
-			windows.insert(window, c);
+			windows.insert(window.clone(), c);
 		}
 
 		let counter = windows.get_mut(&window);
