@@ -2,6 +2,8 @@
 
 use x11wrapper::display::{Display};
 use std::collections::HashMap;
+use selftop::motionSniffer::*;
+
 
 
 pub struct WindowSniffer<'a> {
@@ -19,27 +21,35 @@ impl<'a> WindowSniffer<'a> {
 		}
 	}
 	pub fn processEvent(&mut self, window: Window, event: UserEvent) {
+		// add window if not exists
 		if !self.windows.contains_key(&window) {
-			let mut c = Counter{mouse_motions: 0, keys: 0, clicks: 0};
+			let mut c = Counter{
+				motionSniffer: MotionSniffer {
+					last_event_time: 0,
+					motion_count: 0
+				},
+				keys: 0,
+				clicks: 0
+			};
 			self.windows.insert(window.clone(), c);
 		}
 
+		// get counter
 		let mut counter = self.windows.get_mut(&window);
 
 		match counter {
 			Some(ref mut c) => {
 				match event {
-					MotionEvent => {
-						(*c).mouse_motions += 1;
+					UserEvent::MotionEvent{time} => {
+						(*c).motionSniffer.processEvent(time);
 					},
-					KeyEvent(keycode) => {
+					UserEvent::KeyEvent{keycode, time} => {
 						(*c).keys += 1;
 					},
-					ClickEvent(buttoncode) => {
+					UserEvent::ClickEvent{buttoncode, time} => {
 						(*c).clicks += 1;
 					}
 				}
-				
 			},
 			None => {}
 		}
@@ -62,13 +72,13 @@ impl PartialEq for Window {
 }
 
 pub struct Counter {
-    pub mouse_motions: uint,
     pub keys: uint,
     pub clicks: uint,
+    pub motionSniffer: MotionSniffer
 }
 
 pub enum UserEvent {
-	MotionEvent,
-	KeyEvent{keycode: u8},
-	ClickEvent{buttoncode: u8}
+	MotionEvent{time: uint},
+	KeyEvent{keycode: u8, time: uint},
+	ClickEvent{buttoncode: u8, time: uint}
 }

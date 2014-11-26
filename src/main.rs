@@ -145,13 +145,13 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 		// Count events
 		match xdatum.xtype {
 			xtst::KeyPress => {
-				event = Some(selftop::UserEvent::KeyEvent{keycode: 1});
+				event = Some(selftop::UserEvent::KeyEvent{keycode: 1, time: data.server_time as uint});
 			},
 			xtst::ButtonPress => {
-				event = Some(selftop::UserEvent::ClickEvent{buttoncode: 1});
+				event = Some(selftop::UserEvent::ClickEvent{buttoncode: 1, time: data.server_time as uint});
 			},
 			xtst::MotionNotify => {
-				event = Some(selftop::UserEvent::MotionEvent);
+				event = Some(selftop::UserEvent::MotionEvent{time: data.server_time as uint});
 			},
 			_ => {}
 		}

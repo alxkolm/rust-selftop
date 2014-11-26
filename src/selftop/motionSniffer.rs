@@ -1,13 +1,12 @@
 // mod x11wrapper::window::{Window};
-type Time = uint;
+
 pub struct MotionSniffer {
-    pub last_event_time: Time,
-    // pub last_window: Window,
+    pub last_event_time: uint,
     pub motion_count: uint
 }
 
 impl MotionSniffer {
-	pub fn processEvent(&mut self, time: Time){
+	pub fn processEvent(&mut self, time: uint){
 	
 		let delta = time - self.last_event_time;
 
