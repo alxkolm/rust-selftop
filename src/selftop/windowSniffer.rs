@@ -24,9 +24,10 @@ impl<'a> WindowSniffer<'a> {
 			self.windows.insert(window.clone(), c);
 		}
 
-		let counter = self.windows.get_mut(&window);
+		let mut counter = self.windows.get_mut(&window);
 		match counter {
-			Some(ref c) => (*c).keys += 1,
+
+			Some(ref mut c) => {(*c).keys += 1; println!("Counter: {}", c.keys);},
 			None => {}
 		}
 		

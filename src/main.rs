@@ -125,7 +125,7 @@ fn xRecordBootstrap () {
 extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterceptData) {
 
 	unsafe {
-		let ex: &mut WindowSniffer = std::mem::transmute(pointer);
+		let sniffer: &mut WindowSniffer = std::mem::transmute(pointer);
 		
 		let data = &*raw_data;
 		prev_time = data.server_time as uint;
@@ -137,16 +137,11 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 		let xdatum = &*(data.data as *mut XRecordDatum);
 
 		// Detect wm_name
-		let mut windows = HashMap::new();
+		
 		let window = get_current_window();
 		
 		
-		if !windows.contains_key(&window) {
-			let mut c = selftop::Counter{mouse_motion: 0, keys: 0};
-			windows.insert(window.clone(), c);
-		}
-
-		let counter = windows.get_mut(&window);
+		(*sniffer).processEvent(window);
 		
 
 		// Count events
