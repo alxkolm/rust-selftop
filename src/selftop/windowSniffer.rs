@@ -53,3 +53,8 @@ pub struct Counter {
     pub keys: uint,
 }
 
+enum UserEvent {
+	MotionEvent,
+	KeyEvent{keycode: u8},
+	ButtonEvent{buttoncode: u8}
+}
