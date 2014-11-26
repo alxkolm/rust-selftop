@@ -139,22 +139,26 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 		// Detect wm_name
 		
 		let window = get_current_window();
+		// (*sniffer).processEvent(window);
 		
-		
-		(*sniffer).processEvent(window);
-		
-
+		let mut event = None;
 		// Count events
 		match xdatum.xtype {
 			xtst::KeyPress => {
-				event_key += 1;
+				event = Some(selftop::UserEvent::KeyEvent{keycode: 1});
 			},
 			xtst::ButtonPress => {
-				event_button += 1
+				event = Some(selftop::UserEvent::ClickEvent{buttoncode: 1});
 			},
 			xtst::MotionNotify => {
-				event_motion += 1;
-				motion_sniffer.processEvent(data.server_time as uint);
+				event = Some(selftop::UserEvent::MotionEvent);
+			},
+			_ => {}
+		}
+
+		match event {
+			Some(e) => {
+				(*sniffer).processEvent(window, e);
 			},
 			_ => {}
 		}

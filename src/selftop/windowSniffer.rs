@@ -18,16 +18,29 @@ impl<'a> WindowSniffer<'a> {
 			windows: HashMap::new()
 		}
 	}
-	pub fn processEvent(&mut self, window: Window) {
+	pub fn processEvent(&mut self, window: Window, event: UserEvent) {
 		if !self.windows.contains_key(&window) {
-			let mut c = Counter{mouse_motion: 0, keys: 0};
+			let mut c = Counter{mouse_motions: 0, keys: 0, clicks: 0};
 			self.windows.insert(window.clone(), c);
 		}
 
 		let mut counter = self.windows.get_mut(&window);
-		match counter {
 
-			Some(ref mut c) => {(*c).keys += 1; println!("Counter: {}", c.keys);},
+		match counter {
+			Some(ref mut c) => {
+				match event {
+					MotionEvent => {
+						(*c).mouse_motions += 1;
+					},
+					KeyEvent(keycode) => {
+						(*c).keys += 1;
+					},
+					ClickEvent(buttoncode) => {
+						(*c).clicks += 1;
+					}
+				}
+				
+			},
 			None => {}
 		}
 		
@@ -49,12 +62,13 @@ impl PartialEq for Window {
 }
 
 pub struct Counter {
-    pub mouse_motion: uint,
+    pub mouse_motions: uint,
     pub keys: uint,
+    pub clicks: uint,
 }
 
-enum UserEvent {
+pub enum UserEvent {
 	MotionEvent,
 	KeyEvent{keycode: u8},
-	ButtonEvent{buttoncode: u8}
+	ClickEvent{buttoncode: u8}
 }
