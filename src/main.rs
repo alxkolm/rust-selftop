@@ -6,7 +6,7 @@ use x11::xtst;
 use x11wrapper::{Display};
 use std::time::Duration;
 use std::io::Timer;
-use selftop::{MotionSniffer, WindowSniffer};
+use selftop::{MotionSniffer, WindowSniffer, UserEvent};
 use std::collections::HashMap;
 mod x11;
 mod x11wrapper;
@@ -143,9 +143,9 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 		 
 		// Count events
 		let mut event = match xdatum.xtype {
-			xtst::KeyPress     => Some(selftop::UserEvent::KeyEvent{keycode: 1, time: data.server_time as uint}),
-			xtst::ButtonPress  => Some(selftop::UserEvent::ClickEvent{buttoncode: 1, time: data.server_time as uint}),
-			xtst::MotionNotify => Some(selftop::UserEvent::MotionEvent{time: data.server_time as uint}),
+			xtst::KeyPress     => Some(UserEvent::KeyEvent{time: data.server_time as uint, keycode: 1}),
+			xtst::ButtonPress  => Some(UserEvent::ClickEvent{time: data.server_time as uint, buttoncode: 1}),
+			xtst::MotionNotify => Some(UserEvent::MotionEvent{time: data.server_time as uint}),
 			_                  => None
 		};
 
