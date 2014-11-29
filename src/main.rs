@@ -123,7 +123,6 @@ fn xRecordBootstrap () {
 }
 
 extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterceptData) {
-
 	unsafe {
 		let sniffer: &mut WindowSniffer = std::mem::transmute(pointer);
 		
@@ -141,20 +140,14 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 		let window = get_current_window();
 		// (*sniffer).processEvent(window);
 		
-		let mut event = None;
+		 
 		// Count events
-		match xdatum.xtype {
-			xtst::KeyPress => {
-				event = Some(selftop::UserEvent::KeyEvent{keycode: 1, time: data.server_time as uint});
-			},
-			xtst::ButtonPress => {
-				event = Some(selftop::UserEvent::ClickEvent{buttoncode: 1, time: data.server_time as uint});
-			},
-			xtst::MotionNotify => {
-				event = Some(selftop::UserEvent::MotionEvent{time: data.server_time as uint});
-			},
-			_ => {}
-		}
+		let mut event = match xdatum.xtype {
+			xtst::KeyPress     => Some(selftop::UserEvent::KeyEvent{keycode: 1, time: data.server_time as uint}),
+			xtst::ButtonPress  => Some(selftop::UserEvent::ClickEvent{buttoncode: 1, time: data.server_time as uint}),
+			xtst::MotionNotify => Some(selftop::UserEvent::MotionEvent{time: data.server_time as uint}),
+			_                  => None
+		};
 
 		match event {
 			Some(e) => {
