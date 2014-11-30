@@ -60,6 +60,24 @@ impl<'a> Window<'a> {
 			_ => Some(strings)
 		}
 	}
+	pub fn get_pid(&self) -> Option<u32> {
+		let property_c = self.get_property("_NET_WM_PID", "CARDINAL");
+		match property_c {
+			Some(b) => {
+				// hack!
+				// convert Vec<u8> to u32
+				let mut a: [u8,..4] = [0,0,0,0];
+				let mut i = 0;
+				for j in b.iter() {
+					a[i] = *j;
+					i += 1;
+				}
+				let pid:u32 = unsafe {mem::transmute(a)};
+				Some(pid)
+			},
+			_ => None
+		}
+	}
 	pub fn get_property(&self, property_name: &str, property_type: &str) -> Option<Vec<u8>>{
 		if self.id == 0 {
 			return None;

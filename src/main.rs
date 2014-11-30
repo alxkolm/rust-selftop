@@ -170,9 +170,15 @@ fn redrawScreen(sniffer: &WindowSniffer) {
 
 	for (window, counter) in sniffer.windows.iter() {
 		// println!("{}", (*window).wm_name);
-		match (*window).wm_name {
-			Some(ref wmname) => {
-				out.write((*wmname).as_bytes());
+		// match (*window).wm_name {
+		// 	Some(ref wmname) => {
+		// 		out.write((*wmname).as_bytes());
+		// 	},
+		// 	None => {}
+		// };
+		match (*window).pid {
+			Some(ref pid) => {
+				out.write((*pid).to_string().as_bytes());
 			},
 			None => {}
 		};
@@ -228,6 +234,7 @@ fn get_current_window() -> selftop::Window {
 	selftop::Window {
 		wm_name: current_window.get_wm_name(),
 		class: current_window.get_class(),
+		pid: current_window.get_pid(),
 	}
 }
 

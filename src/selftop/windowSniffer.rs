@@ -103,6 +103,7 @@ impl<'a> WindowSniffer<'a> {
 pub struct Window {
     pub wm_name: Option<String>,
     pub class: Option<Vec<String>>,
+    pub pid: Option<u32>,
 }
 
 impl PartialEq for Window {
