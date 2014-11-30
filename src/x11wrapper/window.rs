@@ -61,6 +61,9 @@ impl<'a> Window<'a> {
 		}
 	}
 	pub fn get_property(&self, property_name: &str, property_type: &str) -> Option<Vec<u8>>{
+		if self.id == 0 {
+			return None;
+		}
 		unsafe {
 			let xa_property_type: xlibint::Atom = xlib::XInternAtom(self.display, property_type.to_c_str().as_ptr(), 0);
 			let xa_property_name: xlibint::Atom = xlib::XInternAtom(self.display, property_name.to_c_str().as_ptr(), 0);

@@ -139,7 +139,9 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 		
 		let window = get_current_window();
 		// (*sniffer).processEvent(window);
-		
+		// if window.is_none() {
+		// 	return;
+		// }
 		 
 		// Count events
 		let mut event = match xdatum.xtype {
@@ -155,7 +157,36 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 			},
 			_ => {}
 		}
+
+		redrawScreen(sniffer);
 		xtst::XRecordFreeData(raw_data);
+	}
+}
+
+fn redrawScreen(sniffer: &WindowSniffer) {
+	let mut out = std::io::stdout();
+	// Clear screen
+	out.write(b"\x1B[2J\x1B[H\x1B[?25l");
+
+	for (window, counter) in sniffer.windows.iter() {
+		// println!("{}", (*window).wm_name);
+		match (*window).wm_name {
+			Some(ref wmname) => {
+				out.write((*wmname).as_bytes());
+			},
+			None => {}
+		};
+
+		out.write(b"\t");
+		out.write(counter.keys.to_string().as_bytes());
+		out.write(b"\t");
+		out.write(counter.clicks.to_string().as_bytes());
+		out.write(b"\t");
+		out.write(counter.motionSniffer.motion_count.to_string().as_bytes());
+		out.write(b"\t");
+		out.write(format_time_span(counter.timer).as_bytes());
+		out.write(b"\n");
+
 	}
 }
 
@@ -181,7 +212,8 @@ fn get_current_window() -> selftop::Window {
 				_ => None
 			}
 		} else {
-			// Found window with adequate WM_NAME. Exit from while loop.
+			// Found window with adequate WM_NAME.
+			// Exit from while loop.
 			break;
 		}
 					
@@ -192,8 +224,19 @@ fn get_current_window() -> selftop::Window {
 		
 		i += 1;
 	}
+
 	selftop::Window {
 		wm_name: current_window.get_wm_name(),
 		class: current_window.get_class(),
 	}
+}
+
+fn format_time_span(timeMs: uint) -> String
+{
+	let secs = timeMs / 1000;
+	
+	let hours = secs/ (60*60);
+	let mins = (secs - (hours*60*60))/60;
+	let seconds = secs - (hours*60*60) - (mins*60);
+	format!("{}h{}m{}s", hours, mins, seconds)
 }
