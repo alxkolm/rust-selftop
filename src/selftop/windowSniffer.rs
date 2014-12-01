@@ -71,20 +71,21 @@ impl<'a> WindowSniffer<'a> {
 
 	pub fn switchTimer(&mut self, time:uint)
 	{
+		match self.prev_window {
+			Some(ref w) => {
+				// Update timers
+				let mut counter = self.windows.get_mut(w);
+				let mut c = counter.unwrap();
+				// hack
+				if c.enter_time != 0 {
+					c.timer += time - c.enter_time;
+					c.enter_time = time;
+				}
+			},
+			None => {}
+		};
+
 		if self.current_window != self.prev_window {
-			match self.prev_window {
-				Some(ref w) => {
-					let mut counter = self.windows.get_mut(w);
-					let mut c = counter.unwrap();
-					// hack
-					if c.enter_time == 0 {
-						c.enter_time = time;
-					} else {
-						c.timer += time - c.enter_time;
-					}
-				},
-				None => {}
-			};
 			match self.current_window {
 				Some(ref w) => {
 					let mut counter = self.windows.get_mut(w);
