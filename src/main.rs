@@ -83,6 +83,8 @@ fn xRecordBootstrap () {
 		let mut recordRangePtr: *mut *mut xtst::XRecordRange = std::mem::transmute(&mut &mut recordRange);
 		recordRange.device_events.first = xtst::KeyPress; // KeyPress
 		recordRange.device_events.last = xtst::MotionNotify; // MotionNotify
+		recordRange.delivered_events.first = xtst::EnterNotify;
+		recordRange.delivered_events.last = xtst::EnterNotify;
 		
 		// Create context
 		let context = xtst::XRecordCreateContext(
@@ -148,6 +150,7 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 			xtst::KeyPress     => Some(UserEvent::KeyEvent{time: data.server_time as uint, keycode: 1}),
 			xtst::ButtonPress  => Some(UserEvent::ClickEvent{time: data.server_time as uint, buttoncode: 1}),
 			xtst::MotionNotify => Some(UserEvent::MotionEvent{time: data.server_time as uint}),
+			xtst::EnterNotify  => Some(UserEvent::EnterEvent{time: data.server_time as uint}),
 			_                  => None
 		};
 

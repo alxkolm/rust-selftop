@@ -49,6 +49,10 @@ impl<'a> WindowSniffer<'a> {
 							// self.switchTimer(time, *c);
 							current_time = time;
 						},
+						UserEvent::EnterEvent{time} => {
+							// self.switchTimer(time, *c);
+							current_time = time;
+						},
 						UserEvent::KeyEvent{keycode, time} => {
 							(*c).keys += 1;
 							// self.switchTimer(time, *c);
@@ -123,6 +127,7 @@ pub struct Counter {
 
 pub enum UserEvent {
 	MotionEvent{time: uint},
+	EnterEvent{time: uint},
 	KeyEvent{keycode: u8, time: uint},
 	ClickEvent{buttoncode: u8, time: uint}
 }
