@@ -167,7 +167,7 @@ fn redrawScreen(sniffer: &WindowSniffer) {
 	let mut out = std::io::stdout();
 	// Clear screen
 	out.write(b"\x1B[2J\x1B[H\x1B[?25l");
-
+	let mut total = 0;
 	for (window, counter) in sniffer.windows.iter() {
 		// println!("{}", (*window).wm_name);
 		// match (*window).wm_name {
@@ -193,7 +193,10 @@ fn redrawScreen(sniffer: &WindowSniffer) {
 		out.write(format_time_span(counter.timer).as_bytes());
 		out.write(b"\n");
 
+		total += counter.timer;
 	}
+	out.write(b"Total\t");
+	out.write(format_time_span(total).as_bytes());
 }
 
 fn get_current_window() -> selftop::Window {
