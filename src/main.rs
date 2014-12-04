@@ -48,6 +48,8 @@ fn xRecordBootstrap () {
 		display_control = Display::new();
 		display_data = Display::new();
 
+		xlib::XSetErrorHandler(Some(errorCallback));
+
 		xlib::XSynchronize(display_control.display, 1);
 
 		
@@ -166,6 +168,10 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
 	}
 }
 
+extern "C" fn errorCallback(display: *mut xlib::Display, errors: *mut xlib::XErrorEvent) -> i32 {
+	return 0;
+}
+
 fn redrawScreen(sniffer: &WindowSniffer) {
 	let mut out = std::io::stdout();
 	// Clear screen
@@ -209,7 +215,7 @@ fn get_current_window() -> selftop::Window {
 	
 	let mut i = 0u;
 	while i < 10 {
-		if current_window.id == 0 {
+		if current_window.id == 0  || current_window.id == 1 {
 			break;
 		}
 		
