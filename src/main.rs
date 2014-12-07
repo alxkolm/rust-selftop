@@ -185,9 +185,17 @@ fn redrawScreen(sniffer: &WindowSniffer) {
 		// 	},
 		// 	None => {}
 		// };
-		match (*window).pid {
-			Some(ref pid) => {
-				out.write((*pid).to_string().as_bytes());
+		match (*window).class {
+			Some(ref class) => {
+				write!(&mut out, "{: <1$.1$}", (*class)[class.len()-1], 20u);
+			},
+			None => {}
+		};
+		out.write(b" ");
+		match (*window).wm_name {
+			Some(ref wm_name) => {
+				// out.write((*wm_name).to_string().as_bytes());
+				write!(&mut out, "{: <1$.1$}", *wm_name, 40u);
 			},
 			None => {}
 		};
