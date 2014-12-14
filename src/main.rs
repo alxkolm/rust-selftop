@@ -1,5 +1,8 @@
 #![feature(globs)]
 extern crate libc;
+extern crate rustbox;
+
+
 use libc::*;
 use x11::xlib;
 use x11::xtst;
@@ -8,6 +11,7 @@ use std::time::Duration;
 use std::io::Timer;
 use selftop::{MotionSniffer, WindowSniffer, UserEvent};
 use std::collections::HashMap;
+use rustbox::{Style,Color};
 mod x11;
 mod x11wrapper;
 mod selftop;
@@ -102,12 +106,16 @@ fn xRecordBootstrap () {
         }
 
         let mut windowSniffer = WindowSniffer::new();
+        rustbox::init();
+        
         // Run
         let res = xtst::XRecordEnableContext(display_data.display, context, Some(recordCallback), std::mem::transmute(&mut windowSniffer));
         if res == 0 {
             panic!("Cound not enable the Record context!\n");
         }
         xtst::XRecordFreeContext(display_data.display, context);
+
+        
 
         // without this timer process consume 100% CPU
         // let mut timer = Timer::new().unwrap();
@@ -163,7 +171,7 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
             _ => {}
         }
 
-        redrawScreen(sniffer);
+        redrawScreenRustBox(sniffer);
         xtst::XRecordFreeData(raw_data);
     }
 }
@@ -214,6 +222,83 @@ fn redrawScreen(sniffer: &WindowSniffer) {
     }
     out.write(b"Total\t");
     out.write(format_time_span(total).as_bytes());
+    out.write(b"\n");
+    println!("{}x{}", rustbox::width(), rustbox::height());
+}
+
+fn redrawScreenRustBox(sniffer: &WindowSniffer) {
+    rustbox::clear();
+    let mut total = 0;
+    let mut current_line = 0;
+
+    let width = rustbox::width();
+    // Width of columns
+    let pid_width = 5;
+    let class_width = 20;
+    let keys_width = 5;
+    let clicks_width = 5;
+    let motions_width = 5;
+    let time_width = 9;
+    let wmname_width = width - pid_width - class_width - keys_width - clicks_width - motions_width - time_width - 7;
+
+    for (window, counter) in sniffer.windows.iter() {
+        let mut current_col = 0;
+        match (*window).pid {
+            Some(pid) => {
+                rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, format!("{: <1$.1$}", pid.to_string(), pid_width));
+            },
+            None => {}
+        };
+
+        current_col += pid_width + 1;
+        match (*window).class {
+            Some(ref class) => {
+                rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, format!("{: <1$.1$}", (*class)[class.len()-1].clone(), class_width));
+            },
+            None => {}
+        };
+        
+        current_col += class_width + 1;
+        match (*window).wm_name {
+            Some(ref wm_name) => {
+                rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, format!("{: <1$.1$}", (*wm_name).clone(), wmname_width));
+            },
+            None => {}
+        };
+        current_col += wmname_width + 1;
+
+        rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, counter.keys.to_string());
+        current_col += keys_width + 1;
+
+        rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, counter.clicks.to_string());
+        current_col += clicks_width + 1;
+
+        rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, counter.motionSniffer.motion_count.to_string());
+        current_col += motions_width + 1;
+
+        rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, format_time_span(counter.timer));
+        current_col += time_width + 1;
+
+        current_line += 1;
+        total += counter.timer;
+    }
+    rustbox::print(0, current_line, Style::Normal, Color::Default, Color::Default, format!("Total: {}", format_time_span(total)));
+
+    rustbox::present();
+    match rustbox::peek_event(0) {
+        rustbox::Event::KeyEvent(_, _, ch) => {
+                match std::char::from_u32(ch) {
+
+                    Some('q') => {
+                        // temporary hack for quit
+                        rustbox::shutdown();
+                        panic!("temporary hack for quit");
+                    },
+                    _ => {}
+                }
+            },
+        _ => {}
+    }
 }
 
 fn get_current_window() -> selftop::Window {
