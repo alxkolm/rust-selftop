@@ -246,7 +246,7 @@ fn redrawScreenRustBox(sniffer: &WindowSniffer) {
 
     for (window, counter) in sniffer.windows.iter() {
         total += counter.timer;
-        
+
         let pid = match (*window).pid {
             Some(pid) => {
                 pid
@@ -271,9 +271,10 @@ fn redrawScreenRustBox(sniffer: &WindowSniffer) {
         items.push((pid, class, wmname, counter.keys, counter.clicks,counter.motionSniffer.motion_count, counter.timer));
     }
 
+    // sort by time, desc order
+    items.sort_by(|a, b| {let (_,_,_,_,_,_, timeA) = (*a).clone(); let (_,_,_,_,_,_, timeB) = (*b).clone(); timeB.cmp(&timeA)});
+
     for item in items.iter() {
-        // let mut current_col = 0;
-        
         let (pid, class, wmname, keys, clicks, motions, timer) = (*item).clone();
         let line = format!(
             "{: <7$.7$} {: <8$.8$} {: <9$.9$} {: <10$.10$} {: <11$.11$} {: <12$.12$} {: <13$.13$}",
