@@ -139,7 +139,7 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
         let sniffer: &mut WindowSniffer = std::mem::transmute(pointer);
         
         let data = &*raw_data;
-        prev_time = data.server_time as uint;
+        
 
         if data.category != xtst::XRecordFromServer {
             return;
@@ -171,59 +171,19 @@ extern "C" fn recordCallback(pointer:*mut i8, raw_data: *mut xtst::XRecordInterc
             _ => {}
         }
 
-        redrawScreenRustBox(sniffer);
+        if (data.server_time as uint) - prev_time > 1000 {
+            prev_time = data.server_time as uint;
+            redrawScreenRustBox(sniffer);
+
+        }
+        
         xtst::XRecordFreeData(raw_data);
+        
     }
 }
 
 extern "C" fn errorCallback(display: *mut xlib::Display, errors: *mut xlib::XErrorEvent) -> i32 {
     return 0;
-}
-
-fn redrawScreen(sniffer: &WindowSniffer) {
-    let mut out = std::io::stdout();
-    // Clear screen
-    out.write(b"\x1B[2J\x1B[H\x1B[?25l");
-    let mut total = 0;
-    for (window, counter) in sniffer.windows.iter() {
-        // println!("{}", (*window).wm_name);
-        // match (*window).wm_name {
-        //  Some(ref wmname) => {
-        //      out.write((*wmname).as_bytes());
-        //  },
-        //  None => {}
-        // };
-        match (*window).class {
-            Some(ref class) => {
-                write!(&mut out, "{: <1$.1$}", (*class)[class.len()-1], 20u);
-            },
-            None => {}
-        };
-        out.write(b" ");
-        match (*window).wm_name {
-            Some(ref wm_name) => {
-                // out.write((*wm_name).to_string().as_bytes());
-                write!(&mut out, "{: <1$.1$}", *wm_name, 40u);
-            },
-            None => {}
-        };
-
-        out.write(b"\t");
-        out.write(counter.keys.to_string().as_bytes());
-        out.write(b"\t");
-        out.write(counter.clicks.to_string().as_bytes());
-        out.write(b"\t");
-        out.write(counter.motionSniffer.motion_count.to_string().as_bytes());
-        out.write(b"\t");
-        out.write(format_time_span(counter.timer).as_bytes());
-        out.write(b"\n");
-
-        total += counter.timer;
-    }
-    out.write(b"Total\t");
-    out.write(format_time_span(total).as_bytes());
-    out.write(b"\n");
-    println!("{}x{}", rustbox::width(), rustbox::height());
 }
 
 fn redrawScreenRustBox(sniffer: &WindowSniffer) {
