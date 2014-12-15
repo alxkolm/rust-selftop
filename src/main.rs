@@ -232,6 +232,7 @@ fn redrawScreenRustBox(sniffer: &WindowSniffer) {
     let mut current_line = 0;
 
     let width = rustbox::width();
+    let height = rustbox::height();
     // Width of columns
     let pid_width = 5;
     let class_width = 20;
@@ -242,45 +243,49 @@ fn redrawScreenRustBox(sniffer: &WindowSniffer) {
     let wmname_width = width - pid_width - class_width - keys_width - clicks_width - motions_width - time_width - 7;
 
     for (window, counter) in sniffer.windows.iter() {
-        let mut current_col = 0;
-        match (*window).pid {
-            Some(pid) => {
-                rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, format!("{: <1$.1$}", pid.to_string(), pid_width));
-            },
-            None => {}
-        };
-
-        current_col += pid_width + 1;
-        match (*window).class {
-            Some(ref class) => {
-                rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, format!("{: <1$.1$}", (*class)[class.len()-1].clone(), class_width));
-            },
-            None => {}
-        };
-        
-        current_col += class_width + 1;
-        match (*window).wm_name {
-            Some(ref wm_name) => {
-                rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, format!("{: <1$.1$}", (*wm_name).clone(), wmname_width));
-            },
-            None => {}
-        };
-        current_col += wmname_width + 1;
-
-        rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, counter.keys.to_string());
-        current_col += keys_width + 1;
-
-        rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, counter.clicks.to_string());
-        current_col += clicks_width + 1;
-
-        rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, counter.motionSniffer.motion_count.to_string());
-        current_col += motions_width + 1;
-
-        rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, format_time_span(counter.timer));
-        current_col += time_width + 1;
-
-        current_line += 1;
         total += counter.timer;
+        
+        if (current_line + 2 < height){
+            let mut current_col = 0;
+            match (*window).pid {
+                Some(pid) => {
+                    rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, format!("{: <1$.1$}", pid.to_string(), pid_width));
+                },
+                None => {}
+            };
+
+            current_col += pid_width + 1;
+            match (*window).class {
+                Some(ref class) => {
+                    rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, format!("{: <1$.1$}", (*class)[class.len()-1].clone(), class_width));
+                },
+                None => {}
+            };
+            
+            current_col += class_width + 1;
+            match (*window).wm_name {
+                Some(ref wm_name) => {
+                    rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, format!("{: <1$.1$}", (*wm_name).clone(), wmname_width));
+                },
+                None => {}
+            };
+            current_col += wmname_width + 1;
+
+            rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, counter.keys.to_string());
+            current_col += keys_width + 1;
+
+            rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, counter.clicks.to_string());
+            current_col += clicks_width + 1;
+
+            rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, counter.motionSniffer.motion_count.to_string());
+            current_col += motions_width + 1;
+
+            rustbox::print(current_col, current_line, Style::Normal, Color::Default, Color::Default, format_time_span(counter.timer));
+            current_col += time_width + 1;
+
+            current_line += 1;
+        }
+        
     }
     rustbox::print(0, current_line, Style::Normal, Color::Default, Color::Default, format!("Total: {}", format_time_span(total)));
 
