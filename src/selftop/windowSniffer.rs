@@ -82,7 +82,11 @@ impl<'a> WindowSniffer<'a> {
 				let mut c = counter.unwrap();
 				// hack
 				if c.enter_time != 0 {
-					c.timer += time - c.enter_time;
+					let delta = time - c.enter_time;
+					// filter events width 5mins inactivity
+					if delta < 5 * 60 * 1000 {
+						c.timer += delta;
+					}
 					c.enter_time = time;
 				}
 			},
