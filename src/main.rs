@@ -234,6 +234,7 @@ fn redrawScreenRustBox(sniffer: &WindowSniffer) {
     // sort by time, desc order
     items.sort_by(|a, b| {let (_,_,_,_,_,_, timeA) = (*a).clone(); let (_,_,_,_,_,_, timeB) = (*b).clone(); timeB.cmp(&timeA)});
 
+    let mut displayTotal = 0;
     for item in items.iter() {
         let (pid, class, wmname, keys, clicks, motions, timer) = (*item).clone();
         let line = format!(
@@ -242,12 +243,13 @@ fn redrawScreenRustBox(sniffer: &WindowSniffer) {
             pid_width, class_width, wmname_width, keys_width, clicks_width, motions_width, time_width
         );
         rustbox::print(0, current_line, Style::Normal, Color::Default, Color::Default, line);
+        displayTotal += timer;
         current_line += 1;
         if current_line + 2 > height {
             break;
         }
     }
-    rustbox::print(0, current_line, Style::Normal, Color::Default, Color::Default, format!("Total: {}", format_time_span(total)));
+    rustbox::print(0, current_line, Style::Normal, Color::Default, Color::Default, format!("Total: {}, shown: {}, not shown: {}", format_time_span(total), format_time_span(displayTotal), format_time_span(total-displayTotal)));
 
     rustbox::present();
     match rustbox::peek_event(0) {
