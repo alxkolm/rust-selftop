@@ -8,7 +8,8 @@ use x11::xlib;
 use x11::xtst;
 use x11wrapper::{Display};
 use std::time::Duration;
-use std::io::Timer;
+use std::old_io::Timer;
+use std::ffi;
 use selftop::{MotionSniffer, WindowSniffer, UserEvent};
 use std::collections::HashMap;
 use rustbox::{Style,Color};
@@ -64,13 +65,13 @@ fn xRecordBootstrap () {
         let arg4:*mut c_int = &mut 1;
         let has_record = xlib::XQueryExtension(
             display_control.display,
-            ext_name.to_c_str().as_ptr() as *const i8,
+            std::mem::transmute(ext_name),
             arg2,
             arg3,
             arg4);
         let extension = xlib::XInitExtension(
             display_control.display,
-            ext_name.to_c_str().as_ptr() as *const i8);
+            std::mem::transmute(ext_name));
         if extension.is_null() {
             panic!("XInitExtension() failed!");
         }

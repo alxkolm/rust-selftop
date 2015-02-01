@@ -108,7 +108,7 @@ impl<'a> WindowSniffer<'a> {
 
 
 
-#[deriving(Hash, Eq, Clone)]
+#[derive(Hash, Eq, Clone)]
 pub struct Window {
     pub wm_name: Option<String>,
     pub class: Option<Vec<String>>,

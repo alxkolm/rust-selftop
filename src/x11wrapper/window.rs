@@ -2,7 +2,7 @@ extern crate libc;
 use x11::xlib;
 use x11::xlibint;
 use std::mem;
-use std::c_vec;
+use std::ffi;
 
 pub struct Window<'a> {
     pub id: uint, // XID
@@ -66,7 +66,7 @@ impl<'a> Window<'a> {
 			Some(b) => {
 				// hack!
 				// convert Vec<u8> to u32
-				let mut a: [u8,..4] = [0,0,0,0];
+				let mut a: [u8; 4] = [0,0,0,0];
 				let mut i = 0;
 				for j in b.iter() {
 					a[i] = *j;
@@ -83,8 +83,8 @@ impl<'a> Window<'a> {
 			return None;
 		}
 		unsafe {
-			let xa_property_type: xlibint::Atom = xlib::XInternAtom(self.display, property_type.to_c_str().as_ptr(), 0);
-			let xa_property_name: xlibint::Atom = xlib::XInternAtom(self.display, property_name.to_c_str().as_ptr(), 0);
+			let xa_property_type: xlibint::Atom = xlib::XInternAtom(self.display, ffi::CString::from_slice(property_type.as_bytes()).as_ptr(), 0);
+			let xa_property_name: xlibint::Atom = xlib::XInternAtom(self.display, ffi::CString::from_slice(property_name.as_bytes()).as_ptr(), 0);
 			let mut actual_type_return  : xlibint::Atom     = 0;
 			let mut actual_format_return: libc::c_int       = 0;
 			let mut nitems_return       : libc::c_ulong     = 0;
@@ -111,9 +111,10 @@ impl<'a> Window<'a> {
 			}
 			let tmp_size = ((actual_format_return as uint) / 8) * (nitems_return as uint);
 			
-			let data = c_vec::CVec::new(prop_return, tmp_size as uint);
+			// let data = c_vec::CVec::new(prop_return, tmp_size as uint);
+			let data = ffi::c_str_to_bytes(mem::transmute(prop_return));
 			let mut copy_data = Vec::with_capacity(tmp_size as uint);
-			for b in data.as_slice().iter() {
+			for b in data.iter() {
 				copy_data.push(*b);
 			}
 			

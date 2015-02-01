@@ -42,7 +42,7 @@ pub type __off64_t = libc::c_long;
 pub type __pid_t = libc::c_int;
 #[repr(C)]
 struct Struct_Unnamed1 {
-    pub __val: [libc::c_int, ..2u],
+    pub __val: [libc::c_int; 2u],
 }
 pub type __fsid_t = Struct_Unnamed1;
 pub type __clock_t = libc::c_long;
@@ -113,7 +113,7 @@ pub type register_t = libc::c_long;
 pub type __sig_atomic_t = libc::c_int;
 #[repr(C)]
 struct Struct_Unnamed2 {
-    pub __val: [libc::c_ulong, ..16u],
+    pub __val: [libc::c_ulong; 16u],
 }
 pub type __sigset_t = Struct_Unnamed2;
 pub type sigset_t = __sigset_t;
@@ -131,7 +131,7 @@ pub type suseconds_t = __suseconds_t;
 pub type __fd_mask = libc::c_long;
 #[repr(C)]
 struct Struct_Unnamed3 {
-    pub __fds_bits: [__fd_mask, ..16u],
+    pub __fds_bits: [__fd_mask; 16u],
 }
 pub type fd_set = Struct_Unnamed3;
 pub type fd_mask = __fd_mask;
@@ -142,10 +142,10 @@ pub type fsfilcnt_t = __fsfilcnt_t;
 pub type pthread_t = libc::c_ulong;
 #[repr(C)]
 pub struct Union_pthread_attr_t {
-    pub data: [u64, ..7u],
+    pub data: [u64; 7u],
 }
 impl Union_pthread_attr_t {
-    pub fn __size(&mut self) -> *mut [libc::c_char, ..56u] {
+    pub fn __size(&mut self) -> *mut [libc::c_char; 56u] {
         unsafe { ::std::mem::transmute(self) }
     }
     pub fn __align(&mut self) -> *mut libc::c_long {
@@ -161,13 +161,13 @@ pub struct Struct___pthread_internal_list {
 pub type __pthread_list_t = Struct___pthread_internal_list;
 #[repr(C)]
 pub struct Union_Unnamed4 {
-    pub data: [u64, ..5u],
+    pub data: [u64; 5u],
 }
 impl Union_Unnamed4 {
     pub fn __data(&mut self) -> *mut Struct___pthread_mutex_s {
         unsafe { ::std::mem::transmute(self) }
     }
-    pub fn __size(&mut self) -> *mut [libc::c_char, ..40u] {
+    pub fn __size(&mut self) -> *mut [libc::c_char; 40u] {
         unsafe { ::std::mem::transmute(self) }
     }
     pub fn __align(&mut self) -> *mut libc::c_long {
@@ -188,10 +188,10 @@ pub struct Struct___pthread_mutex_s {
 pub type pthread_mutex_t = Union_Unnamed4;
 #[repr(C)]
 pub struct Union_Unnamed5 {
-    pub data: [u32, ..1u],
+    pub data: [u32; 1u],
 }
 impl Union_Unnamed5 {
-    pub fn __size(&mut self) -> *mut [libc::c_char, ..4u] {
+    pub fn __size(&mut self) -> *mut [libc::c_char; 4u] {
         unsafe { ::std::mem::transmute(self) }
     }
     pub fn __align(&mut self) -> *mut libc::c_int {
@@ -201,13 +201,13 @@ impl Union_Unnamed5 {
 pub type pthread_mutexattr_t = Union_Unnamed5;
 #[repr(C)]
 pub struct Union_Unnamed6 {
-    pub data: [u64, ..6u],
+    pub data: [u64; 6u],
 }
 impl Union_Unnamed6 {
     pub fn __data(&mut self) -> *mut Struct_Unnamed7 {
         unsafe { ::std::mem::transmute(self) }
     }
-    pub fn __size(&mut self) -> *mut [libc::c_char, ..48u] {
+    pub fn __size(&mut self) -> *mut [libc::c_char; 48u] {
         unsafe { ::std::mem::transmute(self) }
     }
     pub fn __align(&mut self) -> *mut libc::c_longlong {
@@ -228,10 +228,10 @@ struct Struct_Unnamed7 {
 pub type pthread_cond_t = Union_Unnamed6;
 #[repr(C)]
 pub struct Union_Unnamed8 {
-    pub data: [u32, ..1u],
+    pub data: [u32; 1u],
 }
 impl Union_Unnamed8 {
-    pub fn __size(&mut self) -> *mut [libc::c_char, ..4u] {
+    pub fn __size(&mut self) -> *mut [libc::c_char; 4u] {
         unsafe { ::std::mem::transmute(self) }
     }
     pub fn __align(&mut self) -> *mut libc::c_int {
@@ -243,13 +243,13 @@ pub type pthread_key_t = libc::c_uint;
 pub type pthread_once_t = libc::c_int;
 #[repr(C)]
 pub struct Union_Unnamed9 {
-    pub data: [u64, ..7u],
+    pub data: [u64; 7u],
 }
 impl Union_Unnamed9 {
     pub fn __data(&mut self) -> *mut Struct_Unnamed10 {
         unsafe { ::std::mem::transmute(self) }
     }
-    pub fn __size(&mut self) -> *mut [libc::c_char, ..56u] {
+    pub fn __size(&mut self) -> *mut [libc::c_char; 56u] {
         unsafe { ::std::mem::transmute(self) }
     }
     pub fn __align(&mut self) -> *mut libc::c_long {
@@ -273,10 +273,10 @@ struct Struct_Unnamed10 {
 pub type pthread_rwlock_t = Union_Unnamed9;
 #[repr(C)]
 pub struct Union_Unnamed11 {
-    pub data: [u64, ..1u],
+    pub data: [u64; 1u],
 }
 impl Union_Unnamed11 {
-    pub fn __size(&mut self) -> *mut [libc::c_char, ..8u] {
+    pub fn __size(&mut self) -> *mut [libc::c_char; 8u] {
         unsafe { ::std::mem::transmute(self) }
     }
     pub fn __align(&mut self) -> *mut libc::c_long {
@@ -287,10 +287,10 @@ pub type pthread_rwlockattr_t = Union_Unnamed11;
 pub type pthread_spinlock_t = libc::c_int;
 #[repr(C)]
 pub struct Union_Unnamed12 {
-    pub data: [u64, ..4u],
+    pub data: [u64; 4u],
 }
 impl Union_Unnamed12 {
-    pub fn __size(&mut self) -> *mut [libc::c_char, ..32u] {
+    pub fn __size(&mut self) -> *mut [libc::c_char; 32u] {
         unsafe { ::std::mem::transmute(self) }
     }
     pub fn __align(&mut self) -> *mut libc::c_long {
@@ -300,10 +300,10 @@ impl Union_Unnamed12 {
 pub type pthread_barrier_t = Union_Unnamed12;
 #[repr(C)]
 pub struct Union_Unnamed13 {
-    pub data: [u32, ..1u],
+    pub data: [u32; 1u],
 }
 impl Union_Unnamed13 {
-    pub fn __size(&mut self) -> *mut [libc::c_char, ..4u] {
+    pub fn __size(&mut self) -> *mut [libc::c_char; 4u] {
         unsafe { ::std::mem::transmute(self) }
     }
     pub fn __align(&mut self) -> *mut libc::c_int {
@@ -615,7 +615,7 @@ struct Struct_Unnamed32 {
     pub bell_duration: libc::c_uint,
     pub led_mask: libc::c_ulong,
     pub global_auto_repeat: libc::c_int,
-    pub auto_repeats: [libc::c_char, ..32u],
+    pub auto_repeats: [libc::c_char; 32u],
 }
 pub type XKeyboardState = Struct_Unnamed32;
 #[repr(C)]
@@ -792,7 +792,7 @@ struct Struct_Unnamed41 {
     pub send_event: libc::c_int,
     pub display: *mut Display,
     pub window: Window,
-    pub key_vector: [libc::c_char, ..32u],
+    pub key_vector: [libc::c_char; 32u],
 }
 pub type XKeymapEvent = Struct_Unnamed41;
 #[repr(C)]
@@ -1073,16 +1073,16 @@ struct Struct_Unnamed63 {
 }
 #[repr(C)]
 pub struct Union_Unnamed64 {
-    pub data: [u64, ..5u],
+    pub data: [u64; 5u],
 }
 impl Union_Unnamed64 {
-    pub fn b(&mut self) -> *mut [libc::c_char, ..20u] {
+    pub fn b(&mut self) -> *mut [libc::c_char; 20u] {
         unsafe { ::std::mem::transmute(self) }
     }
-    pub fn s(&mut self) -> *mut [libc::c_short, ..10u] {
+    pub fn s(&mut self) -> *mut [libc::c_short; 10u] {
         unsafe { ::std::mem::transmute(self) }
     }
-    pub fn l(&mut self) -> *mut [libc::c_long, ..5u] {
+    pub fn l(&mut self) -> *mut [libc::c_long; 5u] {
         unsafe { ::std::mem::transmute(self) }
     }
 }
@@ -1143,7 +1143,7 @@ struct Struct_Unnamed69 {
 pub type XGenericEventCookie = Struct_Unnamed69;
 #[repr(C)]
 pub struct Union__XEvent {
-    pub data: [u64, ..24u],
+    pub data: [u64; 24u],
 }
 impl Union__XEvent {
     pub fn _type(&mut self) -> *mut libc::c_int {
@@ -1248,7 +1248,7 @@ impl Union__XEvent {
     pub fn xcookie(&mut self) -> *mut XGenericEventCookie {
         unsafe { ::std::mem::transmute(self) }
     }
-    pub fn pad(&mut self) -> *mut [libc::c_long, ..24u] {
+    pub fn pad(&mut self) -> *mut [libc::c_long; 24u] {
         unsafe { ::std::mem::transmute(self) }
     }
 }
@@ -1313,7 +1313,7 @@ struct Struct_Unnamed75 {
 pub type XTextItem16 = Struct_Unnamed75;
 #[repr(C)]
 pub struct Union_Unnamed76 {
-    pub data: [u64, ..1u],
+    pub data: [u64; 1u],
 }
 impl Union_Unnamed76 {
     pub fn display(&mut self) -> *mut *mut Display {
@@ -1432,7 +1432,7 @@ pub struct Struct__XIMText {
 }
 #[repr(C)]
 pub struct Union_Unnamed87 {
-    pub data: [u64, ..1u],
+    pub data: [u64; 1u],
 }
 impl Union_Unnamed87 {
     pub fn multi_byte(&mut self) -> *mut *mut libc::c_char {
@@ -1461,7 +1461,7 @@ pub struct Struct__XIMStringConversionText {
 }
 #[repr(C)]
 pub struct Union_Unnamed88 {
-    pub data: [u64, ..1u],
+    pub data: [u64; 1u],
 }
 impl Union_Unnamed88 {
     pub fn mbs(&mut self) -> *mut *mut libc::c_char {
@@ -1531,7 +1531,7 @@ pub struct Struct__XIMStatusDrawCallbackStruct {
 }
 #[repr(C)]
 pub struct Union_Unnamed92 {
-    pub data: [u64, ..1u],
+    pub data: [u64; 1u],
 }
 impl Union_Unnamed92 {
     pub fn text(&mut self) -> *mut *mut XIMText {
@@ -2183,7 +2183,7 @@ extern "C" {
     pub fn XQueryExtension(arg1: *mut Display, arg2: *const libc::c_char,
                            arg3: *mut libc::c_int, arg4: *mut libc::c_int,
                            arg5: *mut libc::c_int) -> libc::c_int;
-    pub fn XQueryKeymap(arg1: *mut Display, arg2: [libc::c_char, ..32u]) ->
+    pub fn XQueryKeymap(arg1: *mut Display, arg2: [libc::c_char; 32u]) ->
      libc::c_int;
     pub fn XQueryPointer(arg1: *mut Display, arg2: Window, arg3: *mut Window,
                          arg4: *mut Window, arg5: *mut libc::c_int,
